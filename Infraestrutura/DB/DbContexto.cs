@@ -24,5 +24,17 @@ namespace minimal.Infraestrutura.DB
                  ServerVersion.AutoDetect(stringConecao));
             }
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Adiminstrador>().HasData(
+                new Adiminstrador
+                {
+                    Id = 1,
+                    Perfil = "Rinaldo",
+                    Email = "rinaldo3uchoa@gmail.com",
+                    Senha = "123456",
+                }
+            );
+        }
     }
 }
