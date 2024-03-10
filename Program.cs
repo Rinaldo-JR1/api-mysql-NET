@@ -5,6 +5,7 @@ using minimal.Infraestrutura.DB;
 using minimal.Dominios.Servicos;
 using Microsoft.AspNetCore.Mvc;
 using minimal.Dominios.Entidades;
+using minimal.Dominios.ModelViews;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DbContexto>(options =>
@@ -37,9 +38,14 @@ app.MapPost("/adiministradores/login", ([FromBody] LoginDTO loginDTO, iAdimistra
 #endregion
 
 #region Veiculos
-
 app.MapPost("veiculos", ([FromBody] VeiculoDTO veiculoDTO, iVeiculoService service) =>
 {
+    ValidaVeiculoDTO validador = new ValidaVeiculoDTO();
+    var validaResult = validador.validaDTO(veiculoDTO);
+    if (validaResult.Mensagem.Count > 0)
+    {
+        return Results.BadRequest(validaResult.Mensagem);
+    }
     var veiculo = new Veiculo
     {
         Nome = veiculoDTO.Nome,
@@ -58,14 +64,19 @@ app.MapGet("veiculos", ([FromQuery] int pagina, iVeiculoService service) =>
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, iVeiculoService service) =>
 {
     var veiculo = service.BuscaPorId(id);
+
     if (veiculo == null) return Results.NotFound();
-
-
     return Results.Ok(veiculo);
 }).WithTags("Veiculos");
 
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, iVeiculoService service) =>
 {
+    ValidaVeiculoDTO validador = new ValidaVeiculoDTO();
+    var validaResult = validador.validaDTO(veiculoDTO);
+    if (validaResult.Mensagem.Count > 0)
+    {
+        return Results.BadRequest(validaResult.Mensagem);
+    }
     var veiculo = service.BuscaPorId(id);
     if (veiculo == null) return Results.NotFound();
     veiculo.Nome = veiculoDTO.Nome;
