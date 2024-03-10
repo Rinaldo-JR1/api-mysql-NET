@@ -28,7 +28,8 @@ app.MapPost("/adiministradores/login", ([FromBody] LoginDTO loginDTO, iAdimistra
 {
     ValidaLoginDTO valida = new ValidaLoginDTO();
     var validaRes = valida.valida(loginDTO);
-    if(validaRes.Mensagem.Count > 0){
+    if (validaRes.Mensagem.Count > 0)
+    {
         return Results.BadRequest(validaRes);
     }
     if (servico.Login(loginDTO) != null)
@@ -40,6 +41,23 @@ app.MapPost("/adiministradores/login", ([FromBody] LoginDTO loginDTO, iAdimistra
         return Results.Unauthorized();
     }
 }).WithTags("Adiministradores");
+app.MapPost("/administradores", ([FromBody] AdiministradorDTO adiminstrador) =>
+{
+    ValidaAdministrator valida = new ValidaAdministrator();
+    var validaRes = valida.valida(adiminstrador);
+    if (validaRes.Mensagem.Count > 0)
+    {
+        return Results.BadRequest(validaRes);
+    }
+
+    var adm = new Adiminstrador
+    {
+        Email = adiminstrador.Email,
+        Senha = adiminstrador.Senha,
+        Perfil = adiminstrador.Perfil.ToString(),
+    };
+    return Results.Ok();
+});
 #endregion
 
 #region Veiculos

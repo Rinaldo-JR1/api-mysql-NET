@@ -18,10 +18,24 @@ namespace minimal.Dominios.Servicos
             _context = db;
         }
 
+        public void Criar(Adiminstrador adm)
+        {
+            _context.Adiminstradors.Add(adm);
+            _context.SaveChanges();
+        }
+
         public Adiminstrador? Login(LoginDTO loginDto)
         {
             var adm = _context.Adiminstradors.Where(a => a.Senha == loginDto.Senha && a.Email == loginDto.Email).FirstOrDefault();
             return adm;
+        }
+
+        public List<Adiminstrador> Todos(int pagina)
+        {
+            var query = _context.Adiminstradors.AsQueryable();
+            int itemsPorPagina = 10;
+            query = query.Skip(pagina - 1 * itemsPorPagina).Take(itemsPorPagina);
+            return query.ToList();
         }
     }
 }

@@ -10,6 +10,8 @@ namespace minimal.Dominios.Interfaces
     public interface iAdimistradorServico
     {
         Adiminstrador? Login(LoginDTO loginDto);
+        void Criar(Adiminstrador loginDto);
+        List<Adiminstrador> Todos(int pagina = 1);
 
     }
 }
