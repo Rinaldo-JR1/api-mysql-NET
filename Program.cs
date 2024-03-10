@@ -4,6 +4,7 @@ using minimal.Dominios.Interfaces;
 using minimal.Infraestrutura.DB;
 using minimal.Dominios.Servicos;
 using Microsoft.AspNetCore.Mvc;
+using minimal.Dominios.Entidades;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DbContexto>(options =>
@@ -12,11 +13,17 @@ builder.Services.AddDbContext<DbContexto>(options =>
     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("mysql")));
 });
 builder.Services.AddScoped<iAdimistradorServico, AdiminstradorService>();
+builder.Services.AddScoped<iVeiculoService, VeiculoService>();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
-
-app.MapPost("login", ([FromBody] LoginDTO loginDTO, iAdimistradorServico servico) =>
+#region Home
+app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
+#endregion
+#region Adimistradores
+app.MapPost("/adiministradores/login", ([FromBody] LoginDTO loginDTO, iAdimistradorServico servico) =>
 {
     if (servico.Login(loginDTO) != null)
     {
@@ -26,7 +33,33 @@ app.MapPost("login", ([FromBody] LoginDTO loginDTO, iAdimistradorServico servico
     {
         return Results.Unauthorized();
     }
-});
+}).WithTags("Adiministradores");
+#endregion
 
+#region Veiculos
 
+app.MapPost("veiculos", ([FromBody] VeiculoDTO veiculoDTO, iVeiculoService service) =>
+{
+    var veiculo = new Veiculo
+    {
+        Nome = veiculoDTO.Nome,
+        Ano = veiculoDTO.Ano,
+        Marca = veiculoDTO.Marca
+    };
+    service.Incluir(veiculo);
+    return Results.Created($"veiculo/{veiculo.Id}", veiculo);
+}).WithTags("Veiculos");
+
+app.MapGet("veiculos", ([FromQuery] int pagina, iVeiculoService service) =>
+{
+    var veiculos = service.Todos(pagina);
+    return Results.Ok(veiculos);
+}).WithTags("Veiculos");
+
+#endregion
+
+#region Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+#endregion
 app.Run();
