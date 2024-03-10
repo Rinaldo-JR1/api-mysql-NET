@@ -58,10 +58,29 @@ app.MapGet("veiculos", ([FromQuery] int pagina, iVeiculoService service) =>
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, iVeiculoService service) =>
 {
     var veiculo = service.BuscaPorId(id);
-    if(veiculo == null) return Results.NotFound();    
+    if (veiculo == null) return Results.NotFound();
+
+
     return Results.Ok(veiculo);
 }).WithTags("Veiculos");
 
+app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, iVeiculoService service) =>
+{
+    var veiculo = service.BuscaPorId(id);
+    if (veiculo == null) return Results.NotFound();
+    veiculo.Nome = veiculoDTO.Nome;
+    veiculo.Marca = veiculoDTO.Marca;
+    veiculo.Ano = veiculoDTO.Ano;
+    service.Atualizar(veiculo);
+    return Results.Ok(veiculo);
+}).WithTags("Veiculos");
+app.MapDelete("/veiculos/{id}", ([FromRoute] int id, iVeiculoService service) =>
+{
+    var veiculo = service.BuscaPorId(id);
+    if (veiculo == null) return Results.NotFound();
+    service.Apagar(veiculo);
+    return Results.Ok();
+}).WithTags("Veiculos");
 #endregion
 
 #region Swagger
