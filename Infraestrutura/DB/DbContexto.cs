@@ -15,6 +15,7 @@ namespace minimal.Infraestrutura.DB
             _configuracaoAppSetting = configuration;
         }
         public DbSet<Adiminstrador> Adiminstradors { get; set; } = default!;
+        public DbSet<Veiculo> Veiculos { get; set; } = default!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var stringConecao = _configuracaoAppSetting.GetConnectionString("mysql")?.ToString();
