@@ -26,6 +26,11 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 #region Adimistradores
 app.MapPost("/adiministradores/login", ([FromBody] LoginDTO loginDTO, iAdimistradorServico servico) =>
 {
+    ValidaLoginDTO valida = new ValidaLoginDTO();
+    var validaRes = valida.valida(loginDTO);
+    if(validaRes.Mensagem.Count > 0){
+        return Results.BadRequest(validaRes);
+    }
     if (servico.Login(loginDTO) != null)
     {
         return Results.Ok("Login realizado com sucesso!!!");
@@ -44,7 +49,7 @@ app.MapPost("veiculos", ([FromBody] VeiculoDTO veiculoDTO, iVeiculoService servi
     var validaResult = validador.validaDTO(veiculoDTO);
     if (validaResult.Mensagem.Count > 0)
     {
-        return Results.BadRequest(validaResult.Mensagem);
+        return Results.BadRequest(validaResult);
     }
     var veiculo = new Veiculo
     {
@@ -75,7 +80,7 @@ app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, iVeicul
     var validaResult = validador.validaDTO(veiculoDTO);
     if (validaResult.Mensagem.Count > 0)
     {
-        return Results.BadRequest(validaResult.Mensagem);
+        return Results.BadRequest(validaResult);
     }
     var veiculo = service.BuscaPorId(id);
     if (veiculo == null) return Results.NotFound();
