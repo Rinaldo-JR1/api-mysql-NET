@@ -11,7 +11,7 @@ namespace minimal.Dominios.Interfaces
     {
         Adiminstrador? Login(LoginDTO loginDto);
         void Criar(Adiminstrador loginDto);
-        List<Adiminstrador> Todos(int pagina = 1);
+        List<Adiminstrador> Todos();
 
     }
 }

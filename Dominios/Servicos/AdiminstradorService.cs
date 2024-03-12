@@ -30,12 +30,15 @@ namespace minimal.Dominios.Servicos
             return adm;
         }
 
-        public List<Adiminstrador> Todos(int pagina)
+        public Adiminstrador? PorId(int id)
+        {
+            return _context.Adiminstradors.Find(id);
+        }
+
+        public List<Adiminstrador> Todos()
         {
             var query = _context.Adiminstradors.AsQueryable();
-            int itemsPorPagina = 10;
-            query = query.Skip(pagina - 1 * itemsPorPagina).Take(itemsPorPagina);
-            return query.ToList();
+            return [.. query];
         }
     }
 }
